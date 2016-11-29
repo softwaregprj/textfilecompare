@@ -49,6 +49,7 @@ public class TextFileCompareMain extends JFrame implements ActionListener {
         desktop.setDragMode(JDesktopPane.OUTLINE_DRAG_MODE);
     }
 
+    // CREATE MENU BAR
     protected JMenuBar createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
 
