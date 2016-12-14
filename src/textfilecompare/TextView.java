@@ -31,16 +31,18 @@ public class TextView extends JInternalFrame {
 
     private TextView(TextFileCompareMain parent) {
         super("Document #" + (++openFrameCount),
-              true, //resizable
+              false, //resizable
               true, //closable
-              true, //maximizable
-              true);//iconifiable
+              false, //maximizable
+              false);//iconifiable
 
         //...Create the GUI and put it in the window...
 
         //...Then set the window size or call pack...
         this.parent = parent;
     }
+    
+    
     public static TextView newInstance(TextFileCompareMain parent, boolean editable)
     {
     	TextView textView = new TextView(parent);
@@ -135,7 +137,11 @@ public class TextView extends JInternalFrame {
         }
       }
     }
-
+    
+    
+    /*
+     * This method is called directly from the TextFileCompareMain java file
+     */
     public void compareTextDocuments(File file1, File file2)throws Exception
     {
 		FileReader fR1 = new FileReader(file1);
@@ -163,6 +169,8 @@ public class TextView extends JInternalFrame {
 		reader1.close();
 		reader2.close();
     }
+    
+    
     private void appendTextLine(String msg, Color c)
     {
         StyleContext sc = StyleContext.getDefaultStyleContext();
