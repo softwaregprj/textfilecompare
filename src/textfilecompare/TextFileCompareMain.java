@@ -29,10 +29,10 @@ public class TextFileCompareMain extends JFrame implements ActionListener {
 	TextView compareView = null;
 
     public TextFileCompareMain() {
+    	// This will be the title of the window when it is opened
         super("Text Compare");
 
-        //Make the big window be indented 50 pixels from each edge
-        //of the screen.
+        // Make the big window be indented 50 pixels from each edge of the screen.
         int inset = 50;
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setBounds(inset, inset,
@@ -161,11 +161,9 @@ public class TextFileCompareMain extends JFrame implements ActionListener {
         System.exit(0);
     }
 
-    /**
-     * Create the GUI and show it.  For thread safety,
-     * this method should be invoked from the
-     * event-dispatching thread.
-     */
+/*
+ * 	Called by the main() method. This will run the TextFileCompareMain() method in a new frame
+ */
     private static void createAndShowApplication() {
         //Make sure we have nice window decorations.
         JFrame.setDefaultLookAndFeelDecorated(true);
@@ -178,6 +176,10 @@ public class TextFileCompareMain extends JFrame implements ActionListener {
         frame.setVisible(true);
     }
 
+    
+/*	This is the main function. It doesn't really do anything except kickstart a series of other methods that will be
+ * 	called. The first of which will open a window in the program like we want it to.
+ */
     public static void main(String[] args) {
         //Schedule a job for the event-dispatching thread:
         //creating and showing this application's GUI.
