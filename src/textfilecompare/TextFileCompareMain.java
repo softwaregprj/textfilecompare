@@ -7,18 +7,13 @@ import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.beans.PropertyVetoException;
 import java.io.File;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDesktopPane;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JMenuBar;
 import javax.swing.JFrame;
-import javax.swing.KeyStroke;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 import javax.swing.event.MenuEvent;
@@ -33,10 +28,8 @@ public class TextFileCompareMain extends JFrame implements ActionListener, MenuL
 
 	private static final long serialVersionUID = 1L;
 	private static JButton butt1, butt2, butt3, butt4;
-	private static JMenu eggs, oppen;
-	private static JMenuItem open, compare, save, quit;
-//	private static int count=0; // Counts the number of opened documents so user can't open more than 2
-	private static TextView intframe; // Used to create the JInternalFrames for opening documents
+	private static TextView intframe1, intframe2; // Used to create the JInternalFrames for opening documents
+	private static Boolean box1=false;
 
 	JDesktopPane desktop;
 	TextView compareView = null;
@@ -87,7 +80,6 @@ public class TextFileCompareMain extends JFrame implements ActionListener, MenuL
 		//Set up the GUI.
 		desktop = new JDesktopPane(); //a specialized layered pane
 		setContentPane(desktop);
-		//setJMenuBar(createMenuBar());
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
 		panel.setVisible(true);
@@ -125,22 +117,23 @@ public class TextFileCompareMain extends JFrame implements ActionListener, MenuL
 	
 			if ("Open".equals(e.getActionCommand()))
 			{
-				openFileUserAction();
+				if (!box1){
+					openFile1UserAction();
+				}
+				else
+					openFile2UserAction();
 				Component[] frames = desktop.getComponents();
 				if (frames.length >= 3){
-					//open.setEnabled(false);
 					butt1.setEnabled(false);
 					butt2.setEnabled(true);
-					//compare.setEnabled(true);
 				}
 			}
 			
 			else if ("Compare".equals(e.getActionCommand()))
 			{
 				compareFilesUserAction();
-				//save.setEnabled(true);
 				butt3.setEnabled(true);
-				System.out.println("Hello World");
+				
 			}
 			
 			else if ("Save As".equals(e.getActionCommand()))
@@ -174,24 +167,46 @@ public class TextFileCompareMain extends JFrame implements ActionListener, MenuL
 	 * 	OPEN FILE
 	 */
 	//Create a new internal frame.
-	protected void openFileUserAction() throws PropertyVetoException {
-		intframe = TextView.newInstance(this,false);
-		if( intframe.openTextDocument() == true)
+	protected void openFile1UserAction() throws PropertyVetoException {
+		intframe1 = TextView.newInstance(this,false);
+		if( intframe1.openTextDocument() == true)
 		{
 			Rectangle r = this.getBounds();
-			intframe.setTitle(intframe.getFile().getName());
-			intframe.setVisible(true);
+			intframe1.setTitle(intframe1.getFile().getName());
+			intframe1.setVisible(true);
 			
-			intframe.addInternalFrameListener(this);
+			intframe1.addInternalFrameListener(this);
 			
-			intframe.setBounds(0, 30, r.width/3, r.height-30);
+			intframe1.setBounds(0, 30, r.width/3, r.height-60);
 			
-			desktop.add(intframe);
-			intframe.setSelected(true);
+			desktop.add(intframe1);
+			intframe1.setSelected(true);
+			box1 = true;
 		}
 		else
 		{
-			intframe = null;
+			intframe1 = null;
+		}
+	}
+	
+	protected void openFile2UserAction() throws PropertyVetoException {
+		intframe2 = TextView.newInstance(this,false);
+		if( intframe2.openTextDocument() == true)
+		{
+			Rectangle r = this.getBounds();
+			intframe2.setTitle(intframe2.getFile().getName());
+			intframe2.setVisible(true);
+			
+			intframe2.addInternalFrameListener(this);
+			
+			intframe2.setBounds(r.width/3, 30, r.width/3, r.height-60);
+			
+			desktop.add(intframe2);
+			intframe2.setSelected(true);
+		}
+		else
+		{
+			intframe2 = null;
 		}
 	}
 	
@@ -202,11 +217,9 @@ public class TextFileCompareMain extends JFrame implements ActionListener, MenuL
 	{
 		// "Frames" an object of type "Component". It is an array containing all of the already opened frames.
 		Component[] frames = desktop.getComponents();
-		System.out.println(frames.length);
 		// Only run comparison if there are two frames opened
 		if( (frames != null) && (frames.length == 3  ) )
 		{
-			System.out.println("Inside");
 			TextView textView1 = (TextView)frames[0];
 			TextView textView2 = (TextView)frames[1];
 			File file1 = textView1.getFile();
@@ -220,6 +233,10 @@ public class TextFileCompareMain extends JFrame implements ActionListener, MenuL
 			desktop.add(frame);
 			frame.setVisible(true);
 			frame.setSelected(true);
+			
+			Rectangle r = this.getBounds();
+			frame.setBounds(2*r.width/3, 30, r.width/3, r.height-60);
+			
 			compareView=frame;
 		}
 	}
@@ -254,6 +271,9 @@ public class TextFileCompareMain extends JFrame implements ActionListener, MenuL
 		//open.setEnabled(true);
 		butt1.setEnabled(true);
 		butt2.setEnabled(false);
+		if (arg0.getSource().equals(intframe1)){
+			box1 = false;
+		}
 		//count = count-1;
 		
 	}
