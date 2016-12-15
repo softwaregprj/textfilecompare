@@ -16,20 +16,21 @@ import javax.swing.JPanel;
 import javax.swing.JFrame;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
-import javax.swing.event.MenuEvent;
-import javax.swing.event.MenuListener;
+
 
 
 /*/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
  * REQUIRES TextView.java
  */////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-public class TextFileCompareMain extends JFrame implements ActionListener, MenuListener, InternalFrameListener {
+public class TextFileCompareMain extends JFrame implements ActionListener, InternalFrameListener {
 
 	private static final long serialVersionUID = 1L;
 	private static JButton butt1, butt2, butt3, butt4;
 	private static TextView intframe1, intframe2; // Used to create the JInternalFrames for opening documents
+	private static JPanel panel;
 	private static Boolean box1=false;
+	private static Rectangle r;
 
 	JDesktopPane desktop;
 	TextView compareView = null;
@@ -64,271 +65,200 @@ public class TextFileCompareMain extends JFrame implements ActionListener, MenuL
 
 	
 	public TextFileCompareMain() {
-		// This will be the title of the window when it is opened
 		super("Text Compare");
 		
 		// Make the big window be indented 50 pixels from each edge of the screen.
 		int inset = 50;
+		
 		// Dimension is a class containing 2 variables: width and height. This function sets these variables to be
 		// equal to the height and width of the user's screen.
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		
 		// Set the window size to take up the full screen minus a multiple of the inset value declared above.
 		setBounds(inset, inset, screenSize.width - inset*2, screenSize.height - inset*2);
 		
-		Rectangle r = this.getBounds();
+		// Get window dimensions for setting various boundaries
+		r = this.getBounds();
 		
 		//Set up the GUI.
 		desktop = new JDesktopPane(); //a specialized layered pane
 		setContentPane(desktop);
-		JPanel panel = new JPanel();
-		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-		panel.setVisible(true);
-		panel.setBounds(0, 0, r.width, 30);
-		butt1 = new JButton("Open");
-		butt1.addActionListener(this);
-		butt2 = new JButton("Compare");
-		butt2.addActionListener(this);
-		butt2.setEnabled(false);
-		butt3 = new JButton("Save");
-		butt3.addActionListener(this);
-		butt3.setEnabled(false);
-		butt4 = new JButton("Exit");
-		butt4.addActionListener(this);
-		panel.add(butt1);
-		panel.add(butt2);
-		panel.add(butt3);
-		panel.add(butt4);
 		
+		// Add panel of buttons to top of window
+		panel = new JPanel();
+		createPanel(panel);
 		desktop.add(panel);
-		
-		//Make dragging a little faster but perhaps uglier.
-		desktop.setDragMode(JDesktopPane.OUTLINE_DRAG_MODE);
-		}
-	
+	}
 
-	
-	//React to menu selections. This only works because we made sure to do the "addActionListener" command earlier. The
-	// function "actionPerformed" is a standard function in Java that will be called by these listeners without having
-	// to be explicitly written in code.
-	public void actionPerformed(ActionEvent e)
-	{
-		try
-		{
-	
-			if ("Open".equals(e.getActionCommand()))
-			{
-				if (!box1){
-					openFile1UserAction();
-				}
-				else
-					openFile2UserAction();
-				Component[] frames = desktop.getComponents();
-				if (frames.length >= 3){
-					butt1.setEnabled(false);
-					butt2.setEnabled(true);
-				}
-			}
-			
-			else if ("Compare".equals(e.getActionCommand()))
-			{
-				compareFilesUserAction();
-				butt3.setEnabled(true);
-				
-			}
-			
-			else if ("Save As".equals(e.getActionCommand()))
-			{
-				saveFileUserAction();
-			}
-			
-			else if ("Quit".equals(e.getActionCommand()))
-			{
-				exitApplicationUserAction();
-			}
-			
-			else if ("Save".equals(e.getActionCommand()))
-			{
-				saveFileUserAction();
-			}
-			
-			else if ("Exit".equals(e.getActionCommand()))
-			{
-				exitApplicationUserAction();
-			}
+	// CREATE PANEL AT TOP OF THE PAGE TO HOLD BUTTONS
+	public void createPanel(JPanel inpanel){
+		inpanel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+		inpanel.setVisible(true);
+		inpanel.setBounds(0, 0, r.width, 30);
+		populatePanel(inpanel);
 
-		}
-		catch ( Exception error)
-		{
-			error.printStackTrace();
-		}
 	}
 	
-	/*
-	 * 	OPEN FILE
-	 */
-	//Create a new internal frame.
-	protected void openFile1UserAction() throws PropertyVetoException {
-		intframe1 = TextView.newInstance(this,false);
-		if( intframe1.openTextDocument() == true)
-		{
-			Rectangle r = this.getBounds();
-			intframe1.setTitle(intframe1.getFile().getName());
-			intframe1.setVisible(true);
-			
-			intframe1.addInternalFrameListener(this);
-			
-			intframe1.setBounds(0, 30, r.width/3, r.height-60);
-			
-			desktop.add(intframe1);
-			intframe1.setSelected(true);
+	// FILL THE PANEL UP WITH BUTTONS
+	public void populatePanel(JPanel inpanel){
+		butt1 = new JButton("Open");
+		butt2 = new JButton("Compare");
+		butt3 = new JButton("Save");
+		butt4 = new JButton("Exit");
+		createButton(butt1, inpanel);
+		createButton(butt2, inpanel);
+		createButton(butt3, inpanel);
+		createButton(butt4, inpanel);
+	}
+	
+	// CREATE BUTTONS TO ADD TO PANEL
+	public void createButton(JButton butt,JPanel panel){
+		butt.addActionListener(this);
+		panel.add(butt);
+	}
+	
+	// CHECK WHICH FILE TO OPEN
+	private void preOpenFileCheck() throws PropertyVetoException {
+		if (!box1){
+			intframe1 = TextView.newInstance(this,false);
+			openFile(intframe1);
 			box1 = true;
 		}
-		else
-		{
-			intframe1 = null;
+		else{
+			intframe2 = TextView.newInstance(this,false);
+			openFile(intframe2);
+		}
+		Component[] frames = desktop.getComponents();
+		if (frames.length >= 3){
+			butt1.setEnabled(false);
+			butt2.setEnabled(true);
 		}
 	}
 	
-	protected void openFile2UserAction() throws PropertyVetoException {
-		intframe2 = TextView.newInstance(this,false);
-		if( intframe2.openTextDocument() == true)
-		{
-			Rectangle r = this.getBounds();
-			intframe2.setTitle(intframe2.getFile().getName());
-			intframe2.setVisible(true);
-			
-			intframe2.addInternalFrameListener(this);
-			
-			intframe2.setBounds(r.width/3, 30, r.width/3, r.height-60);
-			
-			desktop.add(intframe2);
-			intframe2.setSelected(true);
+	// OPEN FILE
+	public void openFile(TextView intframe) throws PropertyVetoException{
+		if (intframe.openTextDocument()==true){
+			intframe.setTitle(intframe.getFile().getName());
+			intframe.setVisible(true);
+			//Rectangle r = this.getBounds();
+			if (!box1)
+				intframe.setBounds(0, 30, r.width/3, r.height-60);
+			else
+				intframe.setBounds(r.width/3, 30, r.width/3, r.height-60);
+			desktop.add(intframe);
+			intframe.setSelected(true);
+			intframe.addInternalFrameListener(this);
 		}
-		else
-		{
-			intframe2 = null;
+		
+		else{
+			intframe = null;
 		}
 	}
-	
-	/*
-	 * 	ALGORTHIM FOR COMPARING THE TWO FILES
-	 */
-	protected void compareFilesUserAction() throws Exception
-	{
+
+	//	COMPARING THE TWO FILES
+	protected void compareFiles() throws Exception{
 		// "Frames" an object of type "Component". It is an array containing all of the already opened frames.
 		Component[] frames = desktop.getComponents();
 		// Only run comparison if there are two frames opened
-		if( (frames != null) && (frames.length == 3  ) )
-		{
+		if( (frames != null) && (frames.length == 3  ) ){
 			TextView textView1 = (TextView)frames[0];
 			TextView textView2 = (TextView)frames[1];
 			File file1 = textView1.getFile();
 			File file2 = textView2.getFile();
 			
-			// Create new frame that will show the comparison between the two text documents
-			TextView frame = TextView.newInstance(this,true);
-			frame.setTitle("Comparison");
-			frame.compareTextDocuments(file1,file2);
-			// Add the frame to the window
-			desktop.add(frame);
-			frame.setVisible(true);
-			frame.setSelected(true);
+			createCompareFrame(file1, file2);
 			
-			Rectangle r = this.getBounds();
-			frame.setBounds(2*r.width/3, 30, r.width/3, r.height-60);
-			
-			compareView=frame;
+			butt3.setEnabled(true);	
 		}
 	}
+
+	// CREATE FRAME FOR HOLDING MERGED FILE
+	private void createCompareFrame(File file1, File file2) throws Exception, PropertyVetoException {
+		// Create new frame that will show the comparison between the two text documents
+		TextView frame = TextView.newInstance(this,true);
+		frame.setTitle("Comparison");
+		frame.compareTextDocuments(file1,file2);
+		frame.setBounds(2*r.width/3, 30, r.width/3, r.height-60);
+		frame.setVisible(true);
+		// Add the frame to the window
+		desktop.add(frame);
+		frame.setSelected(true);
+		compareView=frame;
+	}
 	
-	protected void saveFileUserAction()
-	{
+	//	SAVE NEW FILE
+	protected void saveFile(){
 		compareView.saveTextDocument();
 	}
 	
-	
-	//Quit the application.
-	protected void exitApplicationUserAction()
-	{
+	//	QUIT THE APPLICATION
+	protected void exitApplicationUserAction(){
 		System.exit(0);
 	}
 
+/*/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+ * 	ACTION LISTENER IMPLEMENTATIONS
+ */////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
+	public void actionPerformed(ActionEvent e){
+		try{
 	
-	
-	
+			if ("Open".equals(e.getActionCommand())){
+				preOpenFileCheck();
+			}
+			
+			else if ("Compare".equals(e.getActionCommand())){
+				compareFiles();
+			}
+			
+			else if ("Save".equals(e.getActionCommand())){
+				saveFile();
+			}
+			
+			else if ("Exit".equals(e.getActionCommand())){
+				exitApplicationUserAction();
+			}
+		}
+		catch ( Exception error){
+			error.printStackTrace();
+		}
+	}
+
 /*/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
  * 	INTERNAL FRAME LISTENER IMPLEMENTATIONS
  */////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	@Override
 	public void internalFrameActivated(InternalFrameEvent arg0) {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
 	public void internalFrameClosed(InternalFrameEvent arg0) {
-		// TODO Auto-generated method stub
-		//open.setEnabled(true);
 		butt1.setEnabled(true);
 		butt2.setEnabled(false);
 		if (arg0.getSource().equals(intframe1)){
 			box1 = false;
 		}
-		//count = count-1;
-		
 	}
 	
 	@Override
-	public void internalFrameClosing(InternalFrameEvent arg0) {
-		// TODO Auto-generated method stub
-		
+	public void internalFrameClosing(InternalFrameEvent arg0) {		
 	}
 
 	@Override
 	public void internalFrameDeactivated(InternalFrameEvent arg0) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void internalFrameDeiconified(InternalFrameEvent arg0) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void internalFrameIconified(InternalFrameEvent arg0) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void internalFrameOpened(InternalFrameEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	
-	
-/*/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
- * 	MENU LISTENER IMPLEMENTATIONS
- */////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	@Override
-	public void menuCanceled(MenuEvent arg0) {
-		// TODO Auto-generated method stub
-		
 	}
 
-	@Override
-	public void menuDeselected(MenuEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void menuSelected(MenuEvent arg0) {
-
-	}
 
 }
