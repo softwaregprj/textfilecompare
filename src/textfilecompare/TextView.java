@@ -165,8 +165,8 @@ public class TextView extends JInternalFrame {
 		FileReader fR1 = new FileReader(file1);
 		FileReader fR2 = new FileReader(file2);
 
-		BufferedReader reader1 = new BufferedReader(fR1, 80000);
-		BufferedReader reader2 = new BufferedReader(fR2, 80000);
+		BufferedReader reader1 = new BufferedReader(fR1, 10^10);
+		BufferedReader reader2 = new BufferedReader(fR2, 10^10);
 
 		String line1 = null;
 		String line2 = null;
@@ -183,8 +183,8 @@ public class TextView extends JInternalFrame {
 			//Set markers for line1 and line2
 	    	line_reset1 = line1;
 	    	line_reset2 = line2;
-	    	reader1.mark(80000);
-	    	reader2.mark(80000);
+	    	reader1.mark(10^10);
+	    	reader2.mark(10^10);
 
 			//If difference is found - loop
 		    if (!line1.equals(line2))
@@ -218,8 +218,8 @@ public class TextView extends JInternalFrame {
     				// Reset pointer position of file 1 & 2 readers to marked point ( reader2.mark() )
     				reader1.reset();
     				reader2.reset();
-    				reader1.mark(80000);
-    		    	reader2.mark(80000);
+    				reader1.mark(10^10);
+    		    	reader2.mark(10^10);
     				line2 = line_reset2;
     				block_merge_text = line1+"\n";
     				
