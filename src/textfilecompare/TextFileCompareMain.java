@@ -26,7 +26,7 @@ import javax.swing.event.InternalFrameListener;
 public class TextFileCompareMain extends JFrame implements ActionListener, InternalFrameListener {
 
 	private static final long serialVersionUID = 1L;
-	private static JButton butt1, butt2, butt3, butt4;
+	protected JButton openButt, compareButt, saveButt, exitButt;
 	private static TextView intframe1, intframe2; // Used to create the JInternalFrames for opening documents
 	private static JPanel panel;
 	private static Boolean box1=false;
@@ -53,7 +53,7 @@ public class TextFileCompareMain extends JFrame implements ActionListener, Inter
  */
 	private static void createAndShowApplication() {
 		//Make sure we have nice window decorations.
-		JFrame.setDefaultLookAndFeelDecorated(true);
+		JFrame.setDefaultLookAndFeelDecorated(false);
 		
 		//Create and set up the window.
 		TextFileCompareMain frame = new TextFileCompareMain();
@@ -66,7 +66,7 @@ public class TextFileCompareMain extends JFrame implements ActionListener, Inter
 	
 	public TextFileCompareMain() {
 		super("Text Compare");
-		
+		box1 = false; // reset value for all new objects
 		// Make the big window be indented 50 pixels from each edge of the screen.
 		int inset = 50;
 		
@@ -101,14 +101,14 @@ public class TextFileCompareMain extends JFrame implements ActionListener, Inter
 	
 	// FILL THE PANEL UP WITH BUTTONS
 	public void populatePanel(JPanel inpanel){
-		butt1 = new JButton("Open");
-		butt2 = new JButton("Compare");
-		butt3 = new JButton("Save");
-		butt4 = new JButton("Exit");
-		createButton(butt1, inpanel);
-		createButton(butt2, inpanel);
-		createButton(butt3, inpanel);
-		createButton(butt4, inpanel);
+		openButt = new JButton("Open");
+		compareButt = new JButton("Compare");
+		saveButt = new JButton("Save");
+		exitButt = new JButton("Exit");
+		createButton(openButt, inpanel);
+		createButton(compareButt, inpanel);
+		createButton(saveButt, inpanel);
+		createButton(exitButt, inpanel);
 	}
 	
 	// CREATE BUTTONS TO ADD TO PANEL
@@ -118,7 +118,7 @@ public class TextFileCompareMain extends JFrame implements ActionListener, Inter
 	}
 	
 	// CHECK WHICH FILE TO OPEN
-	private void preOpenFileCheck() throws PropertyVetoException {
+	public void preOpenFileCheck() throws PropertyVetoException, InterruptedException {
 		if (!box1){
 			intframe1 = TextView.newInstance(this,false);
 			openFile(intframe1);
@@ -130,21 +130,25 @@ public class TextFileCompareMain extends JFrame implements ActionListener, Inter
 		}
 		Component[] frames = desktop.getComponents();
 		if (frames.length >= 3){
-			butt1.setEnabled(false);
-			butt2.setEnabled(true);
+			openButt.setEnabled(false);
+			compareButt.setEnabled(true);
 		}
 	}
 	
 	// OPEN FILE
-	public void openFile(TextView intframe) throws PropertyVetoException{
+	public void openFile(TextView intframe) throws PropertyVetoException, InterruptedException{
 		if (intframe.openTextDocument()==true){
 			intframe.setTitle(intframe.getFile().getName());
 			intframe.setVisible(true);
-			//Rectangle r = this.getBounds();
-			if (!box1)
+			if (!box1){
+				System.out.println("Drawing box 1");
 				intframe.setBounds(0, 30, r.width/3, r.height-60);
-			else
+			}
+			else{
 				intframe.setBounds(r.width/3, 30, r.width/3, r.height-60);
+				System.out.println("Drawing box 2");
+			}
+			Thread.sleep(100); // Added for testing purposes
 			desktop.add(intframe);
 			intframe.setSelected(true);
 			intframe.addInternalFrameListener(this);
@@ -156,7 +160,7 @@ public class TextFileCompareMain extends JFrame implements ActionListener, Inter
 	}
 
 	//	COMPARING THE TWO FILES
-	protected void compareFiles() throws Exception{
+	public void compareFiles() throws Exception{
 		// "Frames" an object of type "Component". It is an array containing all of the already opened frames.
 		Component[] frames = desktop.getComponents();
 		// Only run comparison if there are two frames opened
@@ -168,12 +172,12 @@ public class TextFileCompareMain extends JFrame implements ActionListener, Inter
 			
 			createCompareFrame(file1, file2);
 			
-			butt3.setEnabled(true);	
+			saveButt.setEnabled(true);	
 		}
 	}
 
 	// CREATE FRAME FOR HOLDING MERGED FILE
-	private void createCompareFrame(File file1, File file2) throws Exception, PropertyVetoException {
+	public void createCompareFrame(File file1, File file2) throws Exception, PropertyVetoException {
 		// Create new frame that will show the comparison between the two text documents
 		TextView frame = TextView.newInstance(this,true);
 		frame.setTitle("Comparison");
@@ -187,12 +191,12 @@ public class TextFileCompareMain extends JFrame implements ActionListener, Inter
 	}
 	
 	//	SAVE NEW FILE
-	protected void saveFile(){
+	public void saveFile(){
 		compareView.saveTextDocument();
 	}
 	
 	//	QUIT THE APPLICATION
-	protected void exitApplicationUserAction(){
+	public void exitApplicationUserAction(){
 		System.exit(0);
 	}
 
@@ -233,8 +237,8 @@ public class TextFileCompareMain extends JFrame implements ActionListener, Inter
 
 	@Override
 	public void internalFrameClosed(InternalFrameEvent arg0) {
-		butt1.setEnabled(true);
-		butt2.setEnabled(false);
+		openButt.setEnabled(true);
+		compareButt.setEnabled(false);
 		if (arg0.getSource().equals(intframe1)){
 			box1 = false;
 		}
