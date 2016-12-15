@@ -1,4 +1,4 @@
-package textfilecompares;
+package textfilecompare;
 
 import static org.junit.Assert.*;
 
@@ -76,18 +76,7 @@ public class TextFileCompareMainTest {
 		TextFileCompareMain testobject = new TextFileCompareMain();
 		testobject.preOpenFileCheck();
 		Boolean check = testobject.openButt.isEnabled();
-		assertTrue("The open button should be enabled", check);
-	}	
-	
-	// Compare button should remain enabled after just one window is opened.
-	@Test
-	public void CompareButtonTest1() throws PropertyVetoException, InterruptedException {
-		System.out.println("CompareButtonTest");
-		TextFileCompareMain testobject = new TextFileCompareMain();
-		testobject.preOpenFileCheck();
-		Boolean check = testobject.compareButt.isEnabled();
-		System.out.println(check);
-		assertFalse("The compare button should be disabled", check);
+		assertTrue("The button should be enabled", check);
 	}	
 	
 	// Test that program can open two documents for side-by-side comparison. If so, there will be yet one more frame
