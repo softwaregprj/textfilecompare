@@ -103,7 +103,9 @@ public class TextFileCompareMain extends JFrame implements ActionListener, Inter
 	public void populatePanel(JPanel inpanel){
 		openButt = new JButton("Open");
 		compareButt = new JButton("Compare");
+		compareButt.setEnabled(false);
 		saveButt = new JButton("Save");
+		saveButt.setEnabled(false);
 		exitButt = new JButton("Exit");
 		createButton(openButt, inpanel);
 		createButton(compareButt, inpanel);

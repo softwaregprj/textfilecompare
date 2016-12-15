@@ -76,7 +76,17 @@ public class TextFileCompareMainTest {
 		TextFileCompareMain testobject = new TextFileCompareMain();
 		testobject.preOpenFileCheck();
 		Boolean check = testobject.openButt.isEnabled();
-		assertTrue("The button should be enabled", check);
+		assertTrue("The open button should be enabled", check);
+	}	
+	
+	// Compare button should remain enabled after just one window is opened.
+	@Test
+	public void CompareButtonTest1() throws PropertyVetoException, InterruptedException {
+		System.out.println("CompareButtonTest");
+		TextFileCompareMain testobject = new TextFileCompareMain();
+		testobject.preOpenFileCheck();
+		Boolean check = testobject.compareButt.isEnabled();
+		assertFalse("The compare button should be enabled", check);
 	}	
 	
 	// Test that program can open two documents for side-by-side comparison. If so, there will be yet one more frame
