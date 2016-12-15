@@ -1,4 +1,4 @@
-package textfilecompare;
+package textfilecompares;
 
 
 import java.awt.Component;
@@ -16,6 +16,8 @@ import javax.swing.JPanel;
 import javax.swing.JFrame;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
+
+import textfilecompares.TextView;
 
 
 
