@@ -132,8 +132,7 @@ public class TextView extends JInternalFrame {
 	/*
 	 * This method is called directly from the TextFileCompareMain java file
 	 */
-	public void compareTextDocuments(File file1, File file2)throws Exception
-	{
+	public void compareTextDocuments(File file1, File file2)throws Exception{
 		FileReader fR1 = new FileReader(file1);
 		FileReader fR2 = new FileReader(file2);
 	
@@ -142,8 +141,7 @@ public class TextView extends JInternalFrame {
 	
 		String line1 = null;
 		String line2 = null;
-		while ( ((line1 = reader1.readLine()) != null) && ( (line2 = reader2.readLine()) != null) )
-		{
+		while ( ((line1 = reader1.readLine()) != null) && ( (line2 = reader2.readLine()) != null) ){
 			appendTextLine( "\n", Color.BLACK);
 			if (!line1.equals(line2)){
 				appendTextLine( line1, Color.RED);
@@ -160,8 +158,7 @@ public class TextView extends JInternalFrame {
 	}
 	
 	
-	private void appendTextLine(String msg, Color c)
-	{
+	private void appendTextLine(String msg, Color c){
 		StyleContext sc = StyleContext.getDefaultStyleContext();
 		AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, c);
 		
@@ -171,8 +168,7 @@ public class TextView extends JInternalFrame {
 		this.textArea.replaceSelection(msg);
 	}
 	
-	public File getFile()
-	{
+	public File getFile(){
 		return file;
 	}
 }
