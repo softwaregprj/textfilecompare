@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.JFrame;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
+import textfilecompare.ButtonPanel;
 
 
 
@@ -26,9 +27,9 @@ import javax.swing.event.InternalFrameListener;
 public class TextFileCompareMain extends JFrame implements ActionListener, InternalFrameListener {
 
 	private static final long serialVersionUID = 1L;
-	protected JButton openButt, compareButt, saveButt, exitButt;
+	//protected JButton openButt, compareButt, saveButt, exitButt;
 	private static TextView intframe1, intframe2; // Used to create the JInternalFrames for opening documents
-	private static JPanel panel;
+	private static ButtonPanel panel;
 	private static Boolean box1=false;
 	private static Rectangle r;
 
@@ -84,40 +85,21 @@ public class TextFileCompareMain extends JFrame implements ActionListener, Inter
 		desktop = new JDesktopPane(); //a specialized layered pane
 		setContentPane(desktop);
 		
+		buildPanel();
+		
+	}
+
+	private void buildPanel() {
 		// Add panel of buttons to top of window
-		panel = new JPanel();
-		createPanel(panel);
+		panel = new ButtonPanel(r.width);
+		//createPanel(panel);
+		panel.giveButton(1).addActionListener(this);
+		panel.giveButton(2).addActionListener(this);
+		panel.giveButton(3).addActionListener(this);
+		panel.giveButton(4).addActionListener(this);
 		desktop.add(panel);
 	}
 
-	// CREATE PANEL AT TOP OF THE PAGE TO HOLD BUTTONS
-	public void createPanel(JPanel inpanel){
-		inpanel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-		inpanel.setVisible(true);
-		inpanel.setBounds(0, 0, r.width, 30);
-		populatePanel(inpanel);
-
-	}
-	
-	// FILL THE PANEL UP WITH BUTTONS
-	public void populatePanel(JPanel inpanel){
-		openButt = new JButton("Open");
-		compareButt = new JButton("Compare");
-		compareButt.setEnabled(false);
-		saveButt = new JButton("Save");
-		saveButt.setEnabled(false);
-		exitButt = new JButton("Exit");
-		createButton(openButt, inpanel);
-		createButton(compareButt, inpanel);
-		createButton(saveButt, inpanel);
-		createButton(exitButt, inpanel);
-	}
-	
-	// CREATE BUTTONS TO ADD TO PANEL
-	public void createButton(JButton butt,JPanel panel){
-		butt.addActionListener(this);
-		panel.add(butt);
-	}
 	
 	// CHECK WHICH FILE TO OPEN
 	public void preOpenFileCheck() throws PropertyVetoException, InterruptedException {
@@ -132,8 +114,8 @@ public class TextFileCompareMain extends JFrame implements ActionListener, Inter
 		}
 		Component[] frames = desktop.getComponents();
 		if (frames.length >= 3){
-			openButt.setEnabled(false);
-			compareButt.setEnabled(true);
+			panel.giveButton(1).setEnabled(false);
+			panel.giveButton(2).setEnabled(true);
 		}
 	}
 	
@@ -174,7 +156,7 @@ public class TextFileCompareMain extends JFrame implements ActionListener, Inter
 			
 			createCompareFrame(file1, file2);
 			
-			saveButt.setEnabled(true);	
+			panel.giveButton(3).setEnabled(true);	
 		}
 	}
 
@@ -239,8 +221,8 @@ public class TextFileCompareMain extends JFrame implements ActionListener, Inter
 
 	@Override
 	public void internalFrameClosed(InternalFrameEvent arg0) {
-		openButt.setEnabled(true);
-		compareButt.setEnabled(false);
+		panel.giveButton(1).setEnabled(true);
+		panel.giveButton(2).setEnabled(false);
 		if (arg0.getSource().equals(intframe1)){
 			box1 = false;
 		}
