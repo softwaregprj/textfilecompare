@@ -1,14 +1,12 @@
 package textfilecompare;
 
 
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyVetoException;
-import java.io.File;
 import java.io.IOException;
 
 //import javax.swing.BoxLayout;
@@ -29,10 +27,11 @@ import textfilecompare.ButtonPanel;
 public class TextFileCompareMain extends JFrame implements ActionListener, InternalFrameListener {
 
 	private static final long serialVersionUID = 1L;
-	private static OpenFile intframe1; // Used to create the JInternalFrames for opening documents
+	private static OpenFile intframe1, intframe2; // Used to create the JInternalFrames for opening documents
 	private static ButtonPanel panel;
 	private static Boolean box=false;
 	private static Rectangle r;
+	private static int count=0; // keeps track of the number of opened text files
 
 	JDesktopPane desktop;
 	TextView compareView = null;
@@ -85,64 +84,41 @@ public class TextFileCompareMain extends JFrame implements ActionListener, Inter
 		//Set up the GUI.
 		desktop = new JDesktopPane(); //a specialized layered pane
 		setContentPane(desktop);
-		buildPanel();
+		
+		// Add panel of buttons to top
+		panel = new ButtonPanel(r.width, this);
 		
 	}
 
-	private void buildPanel() {
-		// Add panel of buttons to top of window
-		panel = new ButtonPanel(r.width, this);
-		desktop.add(panel);
-	}
-
-	
-	// CHECK WHICH FILE TO OPEN
+	// CHECK WHICH TEXT BOX TO OPEN
 	public void preOpenFileCheck() throws PropertyVetoException, InterruptedException, IOException {
+		// If the first box is not open, we want to open that one next. After doing so, we want to change the status of
+		// the "box" boolean to indicate that the first box is now open. This will cause the next box we open to be
+		// shifted to the center of the screen so the two don't overlap. In addition, we need to keep track of the
+		// first box (labeled "intframe1") because we need to listen in case this particular internal frame is closed.
+		// When it is closed, box will be set back to zero again.
 		if (!box){
 			intframe1 = new OpenFile(this, box);
 			box = true;
 		}
 		else{
-			new OpenFile(this, box);
+			intframe2 = new OpenFile(this, box);
 		}
 		
-		Component[] frames = desktop.getComponents();
-		if (frames.length >= 3){
+		count++;
+//		When we have two windows opened, we disable the "Open" button and enable the "Compare" button.
+		if (count >= 2){
 			panel.giveButton(1).setEnabled(false);
 			panel.giveButton(2).setEnabled(true);
 		}
 	}
 	
 	
-	//	COMPARING THE TWO FILES
+	//	COMPARE THE TWO FILES
 	public void compareFiles() throws Exception{
-		// "Frames" an object of type "Component". It is an array containing all of the already opened frames.
-		Component[] frames = desktop.getComponents();
-		// Only run comparison if there are two frames opened
-		if( (frames != null) && (frames.length == 3  ) ){
-			TextView textView1 = (TextView)frames[0];
-			TextView textView2 = (TextView)frames[1];
-			File file1 = textView1.getFile();
-			File file2 = textView2.getFile();
-			
-			createCompareFrame(file1, file2);
-			
-			panel.giveButton(3).setEnabled(true);	
-		}
-	}
-
-	// CREATE FRAME FOR HOLDING MERGED FILE
-	public void createCompareFrame(File file1, File file2) throws Exception, PropertyVetoException {
-		// Create new frame that will show the comparison between the two text documents
-		TextView frame = new TextView(this);
-		frame.setTitle("Comparison");
-		frame.compareTextDocuments(file1,file2);
-		frame.setBounds(2*r.width/3, 30, r.width/3, r.height-60);
-		frame.setVisible(true);
-		// Add the frame to the window
-		desktop.add(frame);
-		frame.setSelected(true);
-		compareView=frame;
+		new CompareFile(this, intframe1, intframe2, count);
+//		Enable the "Save" button after performing comparison	
+		panel.giveButton(3).setEnabled(true);
 	}
 	
 	//	SAVE NEW FILE
@@ -192,8 +168,12 @@ public class TextFileCompareMain extends JFrame implements ActionListener, Inter
 
 	@Override
 	public void internalFrameClosed(InternalFrameEvent arg0) {
+//		This section runs whenever an internal frame holding one of the documents closes. When this happens, we want to
+//		re-enable the "Open" button and disable the "Compare" button. Also, if the box that is closed is the first box,
+//		we reset the "box" variable to false, so the next time a window is opened, it will be at that location.
 		panel.giveButton(1).setEnabled(true);
 		panel.giveButton(2).setEnabled(false);
+		count--;
 		if (arg0.getSource().equals(intframe1)){
 			box = false;
 		}

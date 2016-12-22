@@ -12,16 +12,22 @@ import javax.swing.JPanel;
 @SuppressWarnings("serial")
 public class ButtonPanel extends JPanel {
 	private JButton openButt, compareButt, saveButt, exitButt;
-	public JButton buttons[] = {openButt, compareButt , saveButt, exitButt };
 	
+//	CONSTRUCTOR METHOD
 	public ButtonPanel(int width, TextFileCompareMain parent) {
+		panelSettings(width);
+		populatePanel(parent);
+		parent.desktop.add(this);
+	}
+
+//	SETTINGS FOR PANEL
+	void panelSettings(int width) {
 		this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 		this.setVisible(true);
 		this.setBounds(0, 0, width, 30);
-		populatePanel(parent);
 	}
 	
-	// FILL THE PANEL UP WITH BUTTONS
+//	FILL THE PANEL WITH BUTTONS
 	public void populatePanel(TextFileCompareMain parent){	
 		openButt = new JButton("Open");
 		compareButt = new JButton("Compare");
@@ -41,6 +47,7 @@ public class ButtonPanel extends JPanel {
 		this.add(butt);
 	}
 	
+//	Used so main function can easily enable/disable buttons
 	public JButton giveButton(int butt){
 		if (butt == 1){
 			return openButt;
