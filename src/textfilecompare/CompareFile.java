@@ -13,7 +13,6 @@ import javax.swing.text.StyleContext;
 
 /**
  * @author Cian McIntyre
- *
  */
 
 public class CompareFile extends TextView {
@@ -32,26 +31,33 @@ public class CompareFile extends TextView {
 		}
 	}
 
-	void setupComparison(OpenFile intframe1, OpenFile intframe2)
-			throws Exception, PropertyVetoException {
+//	PREPARE FILES FOR COMPARISON ALGORITHM
+	void setupComparison(OpenFile intframe1, OpenFile intframe2) throws Exception, PropertyVetoException {
+		// Get the files from both frames
 		file1 = intframe1.getFile();
 		file2 = intframe2.getFile();
+		
+		// Run files through comparison algorithm
 		compareTextDocuments(file1,file2);
+		
+		// Set frame settings
 		frameSettings();
 		
 		// Add the frame to the window
 		parent.desktop.add(this);
+		this.setSelected(true);
 		parent.compareView = this;
 	}
 
+	// SET THE FRAME SETTINGS
 	void frameSettings() throws PropertyVetoException {
 		r = parent.getBounds();
 		this.setTitle("Comparison");
 		this.setBounds( (2*r.width)/3 - 5, 30, r.width/3 - 5, r.height-70);
-		this.setVisible(true);
-		this.setSelected(true);
+		this.setVisible(true);	
 	}	
 	
+	// HILARY'S COMPARISON ALGORITHM
 	public void compareTextDocuments(File file1, File file2)throws Exception{
 		//Initialisations
 		FileReader fR1 = new FileReader(file1);

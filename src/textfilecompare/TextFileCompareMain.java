@@ -2,17 +2,12 @@ package textfilecompare;
 
 
 import java.awt.Dimension;
-import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyVetoException;
 import java.io.IOException;
-
-//import javax.swing.BoxLayout;
-//import javax.swing.JButton;
 import javax.swing.JDesktopPane;
-//import javax.swing.JPanel;
 import javax.swing.JFrame;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
@@ -30,11 +25,10 @@ public class TextFileCompareMain extends JFrame implements ActionListener, Inter
 	private static OpenFile intframe1, intframe2; // Used to create the JInternalFrames for opening documents
 	private static ButtonPanel panel;
 	private static Boolean box=false;
-	private static Rectangle r;
 	private static int count=0; // keeps track of the number of opened text files
 
 	JDesktopPane desktop;
-	TextView compareView = null;
+	CompareFile compareView = null;
 
 /*	The main() method. It doesn't really do anything except kickstart a series of other methods that will be
  * 	called. The first of which will open a window in the program like we want it to.
@@ -78,15 +72,12 @@ public class TextFileCompareMain extends JFrame implements ActionListener, Inter
 		// Set the window size to take up the full screen minus a multiple of the inset value declared above.
 		setBounds(inset, inset, screenSize.width - inset*2, screenSize.height - inset*2);
 		
-		// Get window dimensions for setting various boundaries
-		r = this.getBounds();
-		
 		//Set up the GUI.
 		desktop = new JDesktopPane(); //a specialized layered pane
 		setContentPane(desktop);
 		
 		// Add panel of buttons to top
-		panel = new ButtonPanel(r.width, this);
+		panel = new ButtonPanel(this);
 		
 	}
 
@@ -108,8 +99,8 @@ public class TextFileCompareMain extends JFrame implements ActionListener, Inter
 		count++;
 //		When we have two windows opened, we disable the "Open" button and enable the "Compare" button.
 		if (count >= 2){
-			panel.giveButton(1).setEnabled(false);
-			panel.giveButton(2).setEnabled(true);
+			panel.disableButton(1);
+			panel.enableButton(2);
 		}
 	}
 	
@@ -117,13 +108,13 @@ public class TextFileCompareMain extends JFrame implements ActionListener, Inter
 	//	COMPARE THE TWO FILES
 	public void compareFiles() throws Exception{
 		new CompareFile(this, intframe1, intframe2, count);
-//		Enable the "Save" button after performing comparison	
-		panel.giveButton(3).setEnabled(true);
+		// Enable the "Save" button after performing comparison	
+		panel.enableButton(3);
 	}
 	
 	//	SAVE NEW FILE
-	public void saveFile(){
-		compareView.saveTextDocument();
+	public void saveFile() throws IOException{
+		new SaveFile (this, compareView);
 	}
 	
 	//	QUIT THE APPLICATION
@@ -134,6 +125,7 @@ public class TextFileCompareMain extends JFrame implements ActionListener, Inter
 /*/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
  * 	ACTION LISTENER IMPLEMENTATIONS
  */////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
+	// This section listens for the user to click one of the buttons and runs a function to respond accordingly
 	public void actionPerformed(ActionEvent e){
 		try{
 	
@@ -171,8 +163,8 @@ public class TextFileCompareMain extends JFrame implements ActionListener, Inter
 //		This section runs whenever an internal frame holding one of the documents closes. When this happens, we want to
 //		re-enable the "Open" button and disable the "Compare" button. Also, if the box that is closed is the first box,
 //		we reset the "box" variable to false, so the next time a window is opened, it will be at that location.
-		panel.giveButton(1).setEnabled(true);
-		panel.giveButton(2).setEnabled(false);
+		panel.enableButton(1);
+		panel.disableButton(2);
 		count--;
 		if (arg0.getSource().equals(intframe1)){
 			box = false;

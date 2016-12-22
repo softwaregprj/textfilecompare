@@ -1,5 +1,7 @@
 package textfilecompare;
 
+import java.awt.Rectangle;
+
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -12,29 +14,33 @@ import javax.swing.JPanel;
 @SuppressWarnings("serial")
 public class ButtonPanel extends JPanel {
 	private JButton openButt, compareButt, saveButt, exitButt;
+	private Rectangle r;
 	
 //	CONSTRUCTOR METHOD
-	public ButtonPanel(int width, TextFileCompareMain parent) {
-		panelSettings(width);
+	public ButtonPanel(TextFileCompareMain parent) {
+		panelSettings(parent);
 		populatePanel(parent);
 		parent.desktop.add(this);
 	}
 
 //	SETTINGS FOR PANEL
-	void panelSettings(int width) {
+	void panelSettings(TextFileCompareMain parent) {
+		r = parent.getBounds();
 		this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 		this.setVisible(true);
-		this.setBounds(0, 0, width, 30);
+		this.setBounds(0, 0, r.width, 30);
 	}
 	
 //	FILL THE PANEL WITH BUTTONS
 	public void populatePanel(TextFileCompareMain parent){	
 		openButt = new JButton("Open");
 		compareButt = new JButton("Compare");
-		compareButt.setEnabled(false);
 		saveButt = new JButton("Save");
-		saveButt.setEnabled(false);
 		exitButt = new JButton("Exit");
+		
+		// "Compare" and "Save" are both disabled until certain conditions are met
+		saveButt.setEnabled(false);
+		compareButt.setEnabled(false);
 		createButton(openButt, parent);
 		createButton(compareButt, parent);
 		createButton(saveButt, parent);
@@ -47,27 +53,33 @@ public class ButtonPanel extends JPanel {
 		this.add(butt);
 	}
 	
-//	Used so main function can easily enable/disable buttons
-	public JButton giveButton(int butt){
+	// DISABLE PARTICULAR BUTTON
+	public void disableButton(int butt){
 		if (butt == 1){
-			return openButt;
+			openButt.setEnabled(false);
 		}
 		
 		else if (butt == 2){
-			return compareButt;
+			compareButt.setEnabled(false);
 		}
 		
 		else if (butt == 3){
-			return saveButt;
+			saveButt.setEnabled(false);
+		}
+	}
+	
+	// ENABLE PARTICULAR BUTTON
+	public void enableButton(int butt){
+		if (butt == 1){
+			openButt.setEnabled(true);
 		}
 		
-		else if (butt == 4){
-			return exitButt;
+		else if (butt == 2){
+			compareButt.setEnabled(true);
 		}
 		
-		else{
-			return null;
+		else if (butt == 3){
+			saveButt.setEnabled(true);
 		}
-		
 	}
 }

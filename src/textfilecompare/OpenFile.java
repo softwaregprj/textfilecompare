@@ -20,20 +20,39 @@ public class OpenFile extends TextView {
 	private TextFileCompareMain parent=null;
 	private boolean box;
 	
+	
+	// CONSTRUCTOR METHOD
 	public OpenFile(TextFileCompareMain parent, boolean box) throws InterruptedException, IOException, PropertyVetoException {			
 		this.parent = parent;
 		this.box = box;
-		OpenFileCheck();
+		buildFrame();
 	}
 	
-	public void OpenFileCheck() throws InterruptedException, IOException, PropertyVetoException{
+	
+	public void buildFrame() throws InterruptedException, IOException, PropertyVetoException{
 		openTextDocument();
 		frameSettings();
 		Thread.sleep(100); // Added for testing purposes
 		parent.desktop.add(this);
+		this.setSelected(true);
 
 	}
 
+	// OPEN THE ACTUAL TEXT DOCUMENT
+	public boolean openTextDocument() throws IOException {
+		
+		// Open the browser to find the file
+		file = openBrowser();
+	
+		// Scan the text from the file to the text area
+		FileReader reader = null;
+		reader = new FileReader(file);
+		textArea.read(reader, null);
+		
+		return true;
+	}
+	
+	// SET FRAME SETTINGS DEPENDING ON WHETHER BOX1 IS OPEN OR NOT
 	void frameSettings() throws PropertyVetoException {
 		r = parent.getBounds();
 		if (!box){
@@ -42,38 +61,30 @@ public class OpenFile extends TextView {
 		else{
 			this.setBounds(r.width/3, 30, r.width/3, r.height-70);
 		}
-		this.setSelected(true);
+		
 		this.addInternalFrameListener(parent);
-	}
-	
-	public boolean openTextDocument() throws IOException {
-		
-		openBrowser();
-	
-		FileReader reader = null;
-		reader = new FileReader(file);
-		textArea.read(reader, null);
-		
 		this.setTitle(this.getFile().getName());
 		this.textArea.setEditable(false);
-		return true;
 	}
 
-	void openBrowser() {
-		// Open browser window to find file
+	// OPEN BROWSER TO FIND FILES TO COMPARE
+	File openBrowser() {
 		JFileChooser chooser = new JFileChooser();
 		if (chooser.showOpenDialog(parent) != JFileChooser.APPROVE_OPTION){
-			return;
+			return null;
 		}
 
 		// Set local file variable equal to the file chosen
 		this.file = chooser.getSelectedFile();
 		if(chooser.getSelectedFile()== null){
-			return;
+			return null;
 		}
+		
+		return file;
 		
 	}
 	
+	// RETURN FILE OF DOCUMENT THAT IS OPEN IN THIS FRAME
 	public File getFile(){
 		return file;
 	}
