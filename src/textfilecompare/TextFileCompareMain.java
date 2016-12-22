@@ -9,10 +9,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyVetoException;
 import java.io.File;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
+import java.io.IOException;
+
+//import javax.swing.BoxLayout;
+//import javax.swing.JButton;
 import javax.swing.JDesktopPane;
-import javax.swing.JPanel;
+//import javax.swing.JPanel;
 import javax.swing.JFrame;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
@@ -27,8 +29,7 @@ import textfilecompare.ButtonPanel;
 public class TextFileCompareMain extends JFrame implements ActionListener, InternalFrameListener {
 
 	private static final long serialVersionUID = 1L;
-	//protected JButton openButt, compareButt, saveButt, exitButt;
-	private static TextView intframe1, intframe2; // Used to create the JInternalFrames for opening documents
+	private static OpenFile intframe1, intframe2; // Used to create the JInternalFrames for opening documents
 	private static ButtonPanel panel;
 	private static Boolean box1=false;
 	private static Rectangle r;
@@ -84,32 +85,26 @@ public class TextFileCompareMain extends JFrame implements ActionListener, Inter
 		//Set up the GUI.
 		desktop = new JDesktopPane(); //a specialized layered pane
 		setContentPane(desktop);
-		
 		buildPanel();
 		
 	}
 
 	private void buildPanel() {
 		// Add panel of buttons to top of window
-		panel = new ButtonPanel(r.width);
-		//createPanel(panel);
-		panel.giveButton(1).addActionListener(this);
-		panel.giveButton(2).addActionListener(this);
-		panel.giveButton(3).addActionListener(this);
-		panel.giveButton(4).addActionListener(this);
+		panel = new ButtonPanel(r.width, this);
 		desktop.add(panel);
 	}
 
 	
 	// CHECK WHICH FILE TO OPEN
-	public void preOpenFileCheck() throws PropertyVetoException, InterruptedException {
+	public void preOpenFileCheck() throws PropertyVetoException, InterruptedException, IOException {
 		if (!box1){
-			intframe1 = TextView.newInstance(this,false);
+			intframe1 = new OpenFile(this);
 			openFile(intframe1);
 			box1 = true;
 		}
 		else{
-			intframe2 = TextView.newInstance(this,false);
+			intframe2 = new OpenFile(this);
 			openFile(intframe2);
 		}
 		Component[] frames = desktop.getComponents();
@@ -120,17 +115,36 @@ public class TextFileCompareMain extends JFrame implements ActionListener, Inter
 	}
 	
 	// OPEN FILE
-	public void openFile(TextView intframe) throws PropertyVetoException, InterruptedException{
+//	public void openFile(TextView intframe) throws PropertyVetoException, InterruptedException{
+//		if (intframe.openTextDocument()==true){
+//			intframe.setTitle(intframe.getFile().getName());
+//			intframe.setVisible(true);
+//			if (!box1){
+//				System.out.println("Drawing box 1");
+//				intframe.setBounds(0, 30, r.width/3, r.height-60);
+//			}
+//			else{
+//				intframe.setBounds(r.width/3, 30, r.width/3, r.height-60);
+//				System.out.println("Drawing box 2");
+//			}
+//			Thread.sleep(100); // Added for testing purposes
+//			desktop.add(intframe);
+//			intframe.setSelected(true);
+//			intframe.addInternalFrameListener(this);
+//		}
+//		
+//		else{
+//			intframe = null;
+//		}
+//	}
+
+	public void openFile(OpenFile intframe) throws PropertyVetoException, InterruptedException, IOException{
 		if (intframe.openTextDocument()==true){
-			intframe.setTitle(intframe.getFile().getName());
-			intframe.setVisible(true);
 			if (!box1){
-				System.out.println("Drawing box 1");
 				intframe.setBounds(0, 30, r.width/3, r.height-60);
 			}
 			else{
 				intframe.setBounds(r.width/3, 30, r.width/3, r.height-60);
-				System.out.println("Drawing box 2");
 			}
 			Thread.sleep(100); // Added for testing purposes
 			desktop.add(intframe);
@@ -142,7 +156,7 @@ public class TextFileCompareMain extends JFrame implements ActionListener, Inter
 			intframe = null;
 		}
 	}
-
+	
 	//	COMPARING THE TWO FILES
 	public void compareFiles() throws Exception{
 		// "Frames" an object of type "Component". It is an array containing all of the already opened frames.
@@ -163,7 +177,7 @@ public class TextFileCompareMain extends JFrame implements ActionListener, Inter
 	// CREATE FRAME FOR HOLDING MERGED FILE
 	public void createCompareFrame(File file1, File file2) throws Exception, PropertyVetoException {
 		// Create new frame that will show the comparison between the two text documents
-		TextView frame = TextView.newInstance(this,true);
+		TextView frame = new TextView(this);
 		frame.setTitle("Comparison");
 		frame.compareTextDocuments(file1,file2);
 		frame.setBounds(2*r.width/3, 30, r.width/3, r.height-60);

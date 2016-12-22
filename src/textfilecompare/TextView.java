@@ -24,12 +24,22 @@ public class TextView extends JInternalFrame {
 	static int openFrameCount = 0;
 	static final int xOffset = 30, yOffset = 30;
 	
-	private JTextPane textArea=null;
+	protected JTextPane textArea=null;
 	private JScrollPane scroll=null;
 	private TextFileCompareMain parent=null;
-	private File file = null;
+	protected File file = null;
 	
-	private TextView(TextFileCompareMain parent) {
+	
+	public TextView() {
+		super("Document #" + (++openFrameCount),
+				false, //resizable
+				true, //closable
+				false, //maximizable
+				false);//iconifiable
+	}
+	
+	
+	public TextView(TextFileCompareMain parent) {
 		super("Document #" + (++openFrameCount),
 			false, //resizable
 			true, //closable
@@ -39,67 +49,103 @@ public class TextView extends JInternalFrame {
 		// Create the GUI and put it in the window.
 		// Then set the window size or call pack.
 		this.parent = parent;
+		this.init();
 	}
 	
 	
-	public static TextView newInstance(TextFileCompareMain parent, boolean editable){
-		TextView textView = new TextView(parent);
-		textView.init(editable);
-		return textView;
-	
+	public void init(){
+		createTextWindow();
+//		setSize(300,300);
+//		setLocation(xOffset*openFrameCount, yOffset*openFrameCount);
 	}
 	
-	public void init(boolean editable){
-		createTextWindow(editable);
-		setSize(300,300);
-		setLocation(xOffset*openFrameCount, yOffset*openFrameCount);
-	}
-	
-	protected void createTextWindow(boolean editable){
+	protected void createTextWindow(){
 		this.textArea = new JTextPane();
 		// Create the StyleContext, the document and the pane
 		this.scroll = new JScrollPane(textArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		this.textArea.setEditable(editable);
 		this.add(scroll, BorderLayout.CENTER);
+		this.setVisible(true);
+		//this.setSelected(true);
+		//this.setTitle(getFile().getName());
 	}
+
+	public File getFile(){
+		return file;
+	}
+	
+//	public TextView(TextFileCompareMain parent) {
+//	super("Document #" + (++openFrameCount),
+//		false, //resizable
+//		true, //closable
+//		false, //maximizable
+//		false);//iconifiable
+//	
+//	// Create the GUI and put it in the window.
+//	// Then set the window size or call pack.
+//	this.parent = parent;
+//	}
+//
+//	public static TextView newInstance(TextFileCompareMain parent, boolean editable){
+//		TextView textView = new TextView(parent);
+//		textView.init(editable);
+//		return textView;
+//	
+//	}
+	
+//	public void init(boolean editable){
+//		createTextWindow(editable);
+//		setSize(300,300);
+//		setLocation(xOffset*openFrameCount, yOffset*openFrameCount);
+//	}
+
+	
+//	protected void createTextWindow(boolean editable){
+//		this.textArea = new JTextPane();
+//		// Create the StyleContext, the document and the pane
+//		this.scroll = new JScrollPane(textArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+//		this.textArea.setEditable(editable);
+//		this.add(scroll, BorderLayout.CENTER);
+//	}
+//	
+
 	
 	// Query user for a filename and attempt to open and read the file into the
 	// text component.
-	public boolean openTextDocument() {
-		JFileChooser chooser = new JFileChooser();
-		if (chooser.showOpenDialog(parent) != JFileChooser.APPROVE_OPTION)
-			return false;
-		
-		this.file = chooser.getSelectedFile();
-		if( null == chooser.getSelectedFile()){
-			return false;
-		}
-	
-		this.file = chooser.getSelectedFile();
-		FileReader reader = null;
-		
-		try{
-			reader = new FileReader(file);
-			textArea.read(reader, null);
-		}
-		
-		catch (IOException ex){
-			JOptionPane.showMessageDialog(this.parent,
-			"File Not Found", "ERROR", JOptionPane.ERROR_MESSAGE);
-		}
-		
-		finally {
-			if (reader != null){
-				try{
-					reader.close();
-				} catch (IOException x) {}
-			}
-		}
-		
-		return true;
-	}
-	
-	
+//	public boolean openTextDocument() {
+//		JFileChooser chooser = new JFileChooser();
+//		if (chooser.showOpenDialog(parent) != JFileChooser.APPROVE_OPTION)
+//			return false;
+//		
+//		this.file = chooser.getSelectedFile();
+//		if( null == chooser.getSelectedFile()){
+//			return false;
+//		}
+//	
+//		//this.file = chooser.getSelectedFile();
+//		FileReader reader = null;
+//		
+//		try{
+//			reader = new FileReader(file);
+//			textArea.read(reader, null);
+//		}
+//		
+//		catch (IOException ex){
+//			JOptionPane.showMessageDialog(this.parent,
+//			"File Not Found", "ERROR", JOptionPane.ERROR_MESSAGE);
+//		}
+//		
+//		finally {
+//			if (reader != null){
+//				try{
+//					reader.close();
+//				} catch (IOException x) {}
+//			}
+//		}
+//		
+//		return true;
+//	}
+//	
+//	
 	public void saveTextDocument(){
 		JFileChooser chooser = new JFileChooser();
 		if (chooser.showSaveDialog(parent) !=
@@ -157,11 +203,10 @@ public class TextView extends JInternalFrame {
 		reader1.close();
 		reader2.close();
 	}*/
+
 	
-	
-	    public void compareTextDocuments(File file1, File file2)throws Exception
-    {
-    	//Initialisations
+	public void compareTextDocuments(File file1, File file2)throws Exception{
+		//Initialisations
 		FileReader fR1 = new FileReader(file1);
 		FileReader fR2 = new FileReader(file2);
 
@@ -273,7 +318,5 @@ public class TextView extends JInternalFrame {
 		this.textArea.replaceSelection(msg);
 	}
 	
-	public File getFile(){
-		return file;
-	}
+
 }
