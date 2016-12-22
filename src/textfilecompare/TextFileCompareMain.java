@@ -29,9 +29,9 @@ import textfilecompare.ButtonPanel;
 public class TextFileCompareMain extends JFrame implements ActionListener, InternalFrameListener {
 
 	private static final long serialVersionUID = 1L;
-	private static OpenFile intframe1, intframe2; // Used to create the JInternalFrames for opening documents
+	private static OpenFile intframe1; // Used to create the JInternalFrames for opening documents
 	private static ButtonPanel panel;
-	private static Boolean box1=false;
+	private static Boolean box=false;
 	private static Rectangle r;
 
 	JDesktopPane desktop;
@@ -68,7 +68,7 @@ public class TextFileCompareMain extends JFrame implements ActionListener, Inter
 	
 	public TextFileCompareMain() {
 		super("Text Compare");
-		box1 = false; // reset value for all new objects
+		box = false; // reset value for all new objects
 		// Make the big window be indented 50 pixels from each edge of the screen.
 		int inset = 50;
 		
@@ -98,15 +98,14 @@ public class TextFileCompareMain extends JFrame implements ActionListener, Inter
 	
 	// CHECK WHICH FILE TO OPEN
 	public void preOpenFileCheck() throws PropertyVetoException, InterruptedException, IOException {
-		if (!box1){
-			intframe1 = new OpenFile(this);
-			openFile(intframe1);
-			box1 = true;
+		if (!box){
+			intframe1 = new OpenFile(this, box);
+			box = true;
 		}
 		else{
-			intframe2 = new OpenFile(this);
-			openFile(intframe2);
+			new OpenFile(this, box);
 		}
+		
 		Component[] frames = desktop.getComponents();
 		if (frames.length >= 3){
 			panel.giveButton(1).setEnabled(false);
@@ -114,48 +113,6 @@ public class TextFileCompareMain extends JFrame implements ActionListener, Inter
 		}
 	}
 	
-	// OPEN FILE
-//	public void openFile(TextView intframe) throws PropertyVetoException, InterruptedException{
-//		if (intframe.openTextDocument()==true){
-//			intframe.setTitle(intframe.getFile().getName());
-//			intframe.setVisible(true);
-//			if (!box1){
-//				System.out.println("Drawing box 1");
-//				intframe.setBounds(0, 30, r.width/3, r.height-60);
-//			}
-//			else{
-//				intframe.setBounds(r.width/3, 30, r.width/3, r.height-60);
-//				System.out.println("Drawing box 2");
-//			}
-//			Thread.sleep(100); // Added for testing purposes
-//			desktop.add(intframe);
-//			intframe.setSelected(true);
-//			intframe.addInternalFrameListener(this);
-//		}
-//		
-//		else{
-//			intframe = null;
-//		}
-//	}
-
-	public void openFile(OpenFile intframe) throws PropertyVetoException, InterruptedException, IOException{
-		if (intframe.openTextDocument()==true){
-			if (!box1){
-				intframe.setBounds(0, 30, r.width/3, r.height-60);
-			}
-			else{
-				intframe.setBounds(r.width/3, 30, r.width/3, r.height-60);
-			}
-			Thread.sleep(100); // Added for testing purposes
-			desktop.add(intframe);
-			intframe.setSelected(true);
-			intframe.addInternalFrameListener(this);
-		}
-		
-		else{
-			intframe = null;
-		}
-	}
 	
 	//	COMPARING THE TWO FILES
 	public void compareFiles() throws Exception{
@@ -238,7 +195,7 @@ public class TextFileCompareMain extends JFrame implements ActionListener, Inter
 		panel.giveButton(1).setEnabled(true);
 		panel.giveButton(2).setEnabled(false);
 		if (arg0.getSource().equals(intframe1)){
-			box1 = false;
+			box = false;
 		}
 	}
 	

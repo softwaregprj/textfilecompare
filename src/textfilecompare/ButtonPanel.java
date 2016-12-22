@@ -4,6 +4,11 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
+/**
+ * @author Cian McIntyre
+ *
+ */
+
 @SuppressWarnings("serial")
 public class ButtonPanel extends JPanel {
 	private JButton openButt, compareButt, saveButt, exitButt;
