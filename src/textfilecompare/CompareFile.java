@@ -5,15 +5,14 @@ import java.beans.PropertyVetoException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 
+import javax.swing.JTextPane;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 
-/**
- * @author Cian McIntyre
- */
 
 public class CompareFile extends TextView {
 
@@ -57,8 +56,8 @@ public class CompareFile extends TextView {
 		this.setVisible(true);	
 	}	
 	
-	// HILARY'S COMPARISON ALGORITHM
-	public void compareTextDocuments(File file1, File file2)throws Exception{
+	// COMPARISON ALGORITHM
+	public JTextPane compareTextDocuments(File file1, File file2)throws IOException{
 		//Initialisations
 		FileReader fR1 = new FileReader(file1);
 		FileReader fR2 = new FileReader(file2);
@@ -150,6 +149,7 @@ public class CompareFile extends TextView {
 		}
 		reader1.close();
 		reader2.close();
+		return this.textArea;
 	}
 
 

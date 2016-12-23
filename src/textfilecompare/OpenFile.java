@@ -1,6 +1,3 @@
-/**
- * 
- */
 package textfilecompare;
 
 import java.beans.PropertyVetoException;
@@ -9,10 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import javax.swing.JFileChooser;
 
-/**
- * @author Cian McIntyre
- *
- */
+
 public class OpenFile extends TextView {
 
 	private static final long serialVersionUID = 1L;
@@ -68,7 +62,7 @@ public class OpenFile extends TextView {
 	}
 
 	// OPEN BROWSER TO FIND FILES TO COMPARE
-	File openBrowser() {
+	public File openBrowser() {
 		JFileChooser chooser = new JFileChooser();
 		if (chooser.showOpenDialog(parent) != JFileChooser.APPROVE_OPTION){
 			return null;

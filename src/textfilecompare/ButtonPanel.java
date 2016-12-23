@@ -1,19 +1,16 @@
 package textfilecompare;
 
 import java.awt.Rectangle;
-
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
-/**
- * @author Cian McIntyre
- *
- */
 
 @SuppressWarnings("serial")
 public class ButtonPanel extends JPanel {
-	private JButton openButt, compareButt, saveButt, exitButt;
+	public JButton openButt, compareButt;
+	public JButton saveButt;
+	public JButton exitButt;
 	private Rectangle r;
 	
 //	CONSTRUCTOR METHOD
